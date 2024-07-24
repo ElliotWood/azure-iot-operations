@@ -4,15 +4,16 @@ param location string = resourceGroup().location
 @description('Name of the Key Vault.')
 param keyVaultName string = '${resourceGroup().name}kv'
 
-@description('Client ID of the service principal.')
-param servicePrincipalClientId string
-
 @description('Tenant ID of the service principal.')
 param tenantId string = tenant().tenantId
 
-@description('Secret values to store in the Key Vault.')
+@description('Client ID of the service principal.')
+param servicePrincipalClientId string
+
 @secure()
-param secrets object
+@description('The secret password associated with the service principal.')
+param servicePrincipalClientSecret string
+
 
 resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   name: keyVaultName
@@ -44,12 +45,19 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   }
 }
 
-resource secret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for secret in items(secrets): {
-  name: secret.key
+resource secret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
+  name: 'servicePrincipalClientId'
   parent: keyVault
   properties: {
-    value: secret.value
+    value: servicePrincipalClientId
   }
-}]
+}
+resource secret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
+  name: 'servicePrincipalClientSecret'
+  parent: keyVault
+  properties: {
+    value: servicePrincipalClientSecret
+  }
+}
 
 output keyVaultName string = keyVault.name

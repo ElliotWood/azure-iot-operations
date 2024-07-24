@@ -28,6 +28,7 @@ jobs:
 
     # Deploy kevault 
     - name: deploy kevault
+      id: deploy_key_vault
       uses: azure/arm-deploy@v1
       with:
        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
@@ -36,8 +37,9 @@ jobs:
        parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }}
        failOnStdErr: false
 
-     # Deploy AKS
+    # Deploy AKS
     - name: deploy AKS
+      id: deploy_aks
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
@@ -45,6 +47,37 @@ jobs:
         template: ./infra/AKS/aks.bicep
         parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }}
         failOnStdErr: false
+      
+    # Deploy log analytics
+    - name: deploy log analytics
+      id: deploy_log_analytics
+      uses: azure/arm-deploy@v1
+      with:
+         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
+         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
+         template: ./infra/AKS/loganalytics.bicep
+         failOnStdErr: false     
+    
+    # Deploy arc
+    - name: deploy arc
+      id: deploy_arc
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
+        resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
+        template: ./infra/AKS/arc.bicep
+        parameters: clusterName=${{ steps.deploy_aks.outputs.aksClusterName }}
+        failOnStdErr: false
 
-    #iot ops
-    #az iot ops init --cluster ${{aksClusterName}} --resource-group ${{ github.event.inputs.clusterResourceGroup }} --kv-id <KEYVAULT_SETTINGS_PROPERTIES_RESOURCE_ID>
+    - name: Deploy AIO to Arc-enabled Cluster
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az iot ops init \
+            --cluster ${{ steps.deploy_aks.outputs.aksClusterName }} \ 
+            --resource-group ${{ github.event.inputs.clusterResourceGroup }} \ 
+            --kv-id ${{ steps.deploy_key_vault.outputs.keyVaultName }} \
+            --sp-app-id ${{ secrets.CLIENT_ID }}  \
+            --sp-secret ${{ secrets.CLIENT_SECRET }} \
+            --kv-sat-secret-name servicePrincipalClientSecret
+            --no-deploy

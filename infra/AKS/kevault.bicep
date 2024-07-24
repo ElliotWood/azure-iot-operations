@@ -2,13 +2,13 @@
 param location string = resourceGroup().location
 
 @description('Name of the Key Vault.')
-param keyVaultName string = 'myKeyVault'
+param keyVaultName string = '${resourceGroup().name}kv'
 
 @description('Client ID of the service principal.')
-param clientId string
+param servicePrincipalClientId string
 
 @description('Tenant ID of the service principal.')
-param tenantId string
+param tenantId string = tenant().tenantId
 
 @description('Secret values to store in the Key Vault.')
 param secrets object
@@ -25,7 +25,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
     accessPolicies: [
       {
         tenantId: tenantId
-        objectId: clientId
+        objectId: servicePrincipalClientId
         permissions: {
           secrets: [
             'get'

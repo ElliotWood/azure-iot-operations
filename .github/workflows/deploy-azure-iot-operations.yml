@@ -15,6 +15,7 @@ on:
         description: 'The path to the environment parameters file for the AIO deployment. (e.g. environments/example.parameters.json)'
         required: true
         type: string
+        default: environments/example.parameters.json
 jobs:
   Deploy:
     runs-on: ubuntu-latest

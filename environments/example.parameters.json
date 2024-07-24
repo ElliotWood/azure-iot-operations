@@ -3,13 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "clusterName": {
-      "value": "my-cluster"
-    },
-    "clusterLocation": {
-      "value": "eastus2"
-    },
-    "location": {
-      "value": "eastus2"
+      "value": "arcakscluster"
     },
     "simulatePLC": {
       "value": false

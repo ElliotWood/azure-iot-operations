@@ -6,10 +6,12 @@ on:
             description: 'The subscription ID where to create the Arc-enabled cluster.'
             required: true
             type: string
+            default: '5f5dd16b-0879-4c86-884f-30347411b95f'
           clusterResourceGroup:
             description: 'The resource group where to create the Arc-enabled cluster.'
             required: true
             type: string
+            default: 'ewakstest'
 
 jobs:
   deploy:
@@ -23,9 +25,19 @@ jobs:
         
     - name: Checkout repository
       uses: actions/checkout@v2
+     
+    # Deploy kevault 
+    - name: deploy kevault
+      uses: azure/arm-deploy@v1
+      with:
+       subscriptionId: ${{ github.event.inputs.clusterSubscription }}
+       resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
+       template: ./infra/AKS/kevault.bicep
+       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} secrets=${{ secrets }}
+       failOnStdErr: false
 
-     # Deploy Bicep file
-    - name: deploy
+     # Deploy AKS
+    - name: deploy AKS
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
@@ -33,3 +45,6 @@ jobs:
         template: ./infra/AKS/aks.bicep
         parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }}
         failOnStdErr: false
+
+    #iot ops
+    #az iot ops init --cluster ${{aksClusterName}} --resource-group ${{ github.event.inputs.clusterResourceGroup }} --kv-id <KEYVAULT_SETTINGS_PROPERTIES_RESOURCE_ID>

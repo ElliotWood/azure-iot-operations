@@ -18,17 +18,7 @@
     },
     "clusterLocation": {
       "type": "string",
-      "defaultValue": "[parameters('location')]",
-      "allowedValues": [
-        "eastus",
-        "eastus2",
-        "westus",
-        "westus2",
-        "westus3",
-        "westeurope",
-        "northeurope",
-        "eastus2euap"
-      ],
+      "defaultValue": "[resourceGroup().location]",
       "metadata": {
         "description": "Location of the existing arc-enabled cluster where AIO will be deployed."
       }
@@ -36,16 +26,6 @@
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
-      "allowedValues": [
-        "eastus",
-        "eastus2",
-        "westus",
-        "westus2",
-        "westus3",
-        "westeurope",
-        "northeurope",
-        "eastus2euap"
-      ],
       "metadata": {
         "description": "Location of where ARM resources will be deployed to. The default is where the resource group is located."
       }

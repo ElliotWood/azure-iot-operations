@@ -65,3 +65,4 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
 }
 
 output controlPlaneFQDN string = aksCluster.properties.azurePortalFQDN
+output aksClusterName string = aksCluster.name

@@ -27,11 +27,8 @@ param servicePrincipalClientId string
 @description('The secret password associated with the service principal.')
 param servicePrincipalClientSecret string
 
-@description('Tenant ID of the service principal.')
-param tenantId string
-
-@description('Log Analytics Workspace Resource ID')
-param logAnalyticsWorkspaceResourceID string
+// @description('Log Analytics Workspace Resource ID')
+// param logAnalyticsWorkspaceResourceID string
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
   name: clusterName
@@ -68,4 +65,4 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
 }
 
 output kubeconfig string = aksCluster.properties.kubeConfigRaw
-output controlPlaneFQDN string = aks.properties.fqdn
+output controlPlaneFQDN string = aksCluster.properties.fqdn

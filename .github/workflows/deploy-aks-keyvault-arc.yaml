@@ -20,12 +20,23 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Parse AZURE_CREDENTIALS
+      id: parse_creds
+      run: |
+        echo "${{ secrets.AZURE_CREDENTIALS }}" > creds.json
+        clientId=$(jq -r .clientId creds.json)
+        clientSecret=$(jq -r .clientSecret creds.json)
+        subscriptionId=$(jq -r .subscriptionId creds.json)
+        echo "CLIENT_ID=$clientId" >> $GITHUB_ENV
+        echo "CLIENT_SECRET=$clientSecret" >> $GITHUB_ENV
+        echo "SUBSCRIPTION_ID=$subscriptionId" >> $GITHUB_ENV
+
      # Deploy Bicep file
     - name: deploy
       uses: azure/arm-deploy@v1
       with:
-        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        subscriptionId: ${{ env.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
         template: ./infra/AKS/aks.bicep
-        parameters: servicePrincipalClientId=${{ secrets.AZURE_CREDENTIALS.clientId  }} servicePrincipalClientSecret=${{ secrets.AZURE_CREDENTIALS.clientSecret  }}
+        parameters: servicePrincipalClientId=${{ env.CLIENT_ID }} servicePrincipalClientSecret=${{ env.CLIENT_SECRET }}
         failOnStdErr: false

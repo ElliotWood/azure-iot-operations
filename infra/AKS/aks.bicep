@@ -64,5 +64,4 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
   }
 }
 
-output kubeconfig string = aksCluster.properties.kubeConfigRaw
-output controlPlaneFQDN string = aksCluster.properties.fqdn
+output controlPlaneFQDN string = aksCluster.properties.azurePortalFQDN

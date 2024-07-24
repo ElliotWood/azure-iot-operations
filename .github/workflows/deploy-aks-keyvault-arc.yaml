@@ -25,7 +25,7 @@ jobs:
         
     - name: Checkout repository
       uses: actions/checkout@v2
-     
+
     # Deploy kevault 
     - name: deploy kevault
       uses: azure/arm-deploy@v1
@@ -33,7 +33,9 @@ jobs:
        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
        resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
        template: ./infra/AKS/kevault.bicep
-       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} secrets=${{ secrets.AZURE_CREDENTIALS }}
+       parameters: |
+        servicePrincipalClientId=${{ secrets.CLIENT_ID }} 
+        secrets={"servicePrincipalClientId": "${{ secrets.CLIENT_ID }}","servicePrincipalClientSecret": "${{ secrets.CLIENT_SECRET }}"}
        failOnStdErr: false
 
      # Deploy AKS

@@ -9,6 +9,24 @@ meant for publicly sharing the releases of AIO and not shared development of AIO
 Please see the [Azure IoT Operations documentation](https://aka.ms/AIOdocs) for more information. To learn how to 
 deploy AIO using GitOps, see the [Deploy to cluster documentation](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-deploy-iot-operations?tabs=github#deploy-extensions).
 
+# Prereq
+- Docker
+- Azure cli
+- choco install kubernetes-cli
+- choco install k3d
+
+1) Az Login
+No     Subscription name                     Subscription ID                       Tenant
+-----  ------------------------------------  ------------------------------------  --------------
+[1]    LAB3-Sensormine                       ddb57ff2-ff23-4732-9730-77d3394019e6  LAB3 PTY. LTD.
+[2] *  SensorMine-Development                5f5dd16b-0879-4c86-884f-30347411b95f  lab3sensormine
+[3]    Visual Studio Enterprise Subscrip...  a1039d76-c132-4a47-947a-519d0bcc2bb0  LAB3 PTY. LTD.
+
+2) az account set -s 5f5dd16b-0879-4c86-884f-30347411b95f
+
+3) az ad sp create-for-rbac --name iotopsownersp --role owner --scopes /subscriptions/5f5dd16b-0879-4c86-884f-30347411b95f --json-auth  
+'''omitted'''
+
 ## Forking the Repo
 
 If you want to fork this repo and try deployment of AIO through GitOps, there are some additional steps you will 

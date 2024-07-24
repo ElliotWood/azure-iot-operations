@@ -11,6 +11,7 @@ param servicePrincipalClientId string
 param tenantId string = tenant().tenantId
 
 @description('Secret values to store in the Key Vault.')
+@secure()
 param secrets object
 
 resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
@@ -46,7 +47,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
 resource secret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for secret in items(secrets): {
   name: '${keyVault.name}/${secret.key}'
   properties: {
-    value: secret.value
+    value: '${secret.value}'
   }
 }]
 

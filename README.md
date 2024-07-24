@@ -40,6 +40,18 @@ deploy AIO using GitOps, see the [Deploy to cluster documentation](https://learn
     # omitted
     ```
 
+4. Set extentions once per subscription
+
+    ```bash
+    az provider register -n "Microsoft.ExtendedLocation"
+    az provider register -n "Microsoft.Kubernetes"
+    az provider register -n "Microsoft.KubernetesConfiguration"
+    az provider register -n "Microsoft.IoTOperationsOrchestrator"
+    az provider register -n "Microsoft.IoTOperationsMQ"
+    az provider register -n "Microsoft.IoTOperationsDataProcessor"
+    az provider register -n "Microsoft.DeviceRegistry"
+    ```
+
 ## GitOps
 
 Deployment of AIO through GitOps, there are some additional steps you will need to take to set up the fork.
@@ -95,3 +107,9 @@ Please see [Contributing.](https://github.com/Azure/azure-iot-operations/blob/ma
 ## Reporting Security Issues
 
 Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/SECURITY.md)
+
+## Help and Guidance
+
+1. [Deploy apps to Azure-Arc enabled Kubernetes cluster using 'Cluster Connect' and 'GitHub Actions'](https://techcommunity.microsoft.com/t5/azure-arc-blog/deploy-apps-to-azure-arc-enabled-kubernetes-cluster-using/ba-p/3286541)
+2. [aksbicep](https://github.com/jaydestro/aksbicep/tree/main)
+3. [Quickstart: Deploy an Azure Kubernetes Service (AKS) cluster using Bicep](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-bicep?tabs=azure-cli)

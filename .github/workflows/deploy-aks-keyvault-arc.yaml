@@ -1,0 +1,33 @@
+name: Deploy AKS, Key Vault, and Arc
+on:
+    workflow_dispatch:
+        inputs:
+          clusterResourceGroup:
+            description: 'The resource group where to create the Arc-enabled cluster.'
+            required: true
+            type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+     # Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ env.AZURE_RG }}
+        template: ./aks.bicep
+        parameters: 
+          servicePrincipalClientId: ${{ secrets.CLIENT_ID }}
+          servicePrincipalClientSecret: ${{ secrets.CLIENT_SECRET }}
+        failOnStdErr: false

@@ -43,9 +43,11 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   }
 }
 
-resource secret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for secretName in secrets.keys(): {
-  name: '${keyVault.name}/${secretName}'
+resource secret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for secret in items(secrets): {
+  name: '${keyVault.name}/${secret.key}'
   properties: {
-    value: secrets[secretName]
+    value: secret.value
   }
 }]
+
+output keyVaultName string = keyVault.name

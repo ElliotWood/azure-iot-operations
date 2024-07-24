@@ -33,7 +33,7 @@ jobs:
        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
        resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
        template: ./infra/AKS/kevault.bicep
-       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} secrets=${{ secrets }}
+       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} secrets=${{ secrets.AZURE_CREDENTIALS }}
        failOnStdErr: false
 
      # Deploy AKS

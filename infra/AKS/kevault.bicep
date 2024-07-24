@@ -45,14 +45,14 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   }
 }
 
-resource secret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
+resource clientIdSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   name: 'servicePrincipalClientId'
   parent: keyVault
   properties: {
     value: servicePrincipalClientId
   }
 }
-resource secret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
+resource clientSecretSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   name: 'servicePrincipalClientSecret'
   parent: keyVault
   properties: {

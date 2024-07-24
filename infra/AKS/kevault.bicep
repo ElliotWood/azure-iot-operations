@@ -45,10 +45,10 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
 }
 
 resource secret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = [for secret in items(secrets): {
-  name: secret.key
+  name: '${secret.key}'
   parent: keyVault
   properties: {
-    value: secret.value
+    value: '${secret.value}'
   }
 }]
 

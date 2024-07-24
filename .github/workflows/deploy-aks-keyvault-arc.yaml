@@ -26,6 +26,6 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
-        template: ./aks.bicep
+        template: ./infra/AKS/aks.bicep
         parameters: servicePrincipalClientId=${{ secrets.AZURE_CREDENTIALS.clientId  }} servicePrincipalClientSecret=${{ secrets.AZURE_CREDENTIALS.clientSecret  }}
         failOnStdErr: false

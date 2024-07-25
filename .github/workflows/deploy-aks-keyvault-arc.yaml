@@ -34,7 +34,7 @@ jobs:
        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
        resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
        template: ./infra/AKS/kevault.bicep
-       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} sshPublicKey=${{ secrets.RSA_PUBLIC_KEY }}
+       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} sshPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
        failOnStdErr: false
     
     # Deploy log analytics

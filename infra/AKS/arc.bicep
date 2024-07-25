@@ -1,35 +1,16 @@
-// params
-@minLength(5)
-@maxLength(50)
-@description('Specifies the name of the azure container registry.')
-param clusterName string = 'acr001${uniqueString(resourceGroup().id)}' // must be globally unique
-
-@description('Enable admin user that have push / pull permission to the registry.')
-param acrAdminUserEnabled bool = false
-
-@description('Specifies the Azure location where the key vault should be created.')
 param location string = resourceGroup().location
+param clusterName string
 
-@allowed([
-  'Basic'
-  'Standard'
-  'Premium'
-])
-@description('Tier of your Azure Container Registry.')
-param acrSku string = 'Basic'
+@description('Configure all linux machines with the SSH RSA public key string. Your key should include three parts, for example \'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm\'')
+param sshRSAPublicKey string
 
-// azure container registry
-resource acr 'Microsoft.Kubernetes/connectedClusters@2024-07-01-preview' = {
+resource connectedCluster 'Microsoft.Kubernetes/connectedClusters@2022-10-01-preview' = {
   name: clusterName
   location: location
-  sku: {
-    name: acrSku
-  }
   identity:{
     type:'SystemAssigned'
   }
   properties: {
-    adminUserEnabled: acrAdminUserEnabled
+    agentPublicKeyCertificate: sshRSAPublicKey
   }
 }
-

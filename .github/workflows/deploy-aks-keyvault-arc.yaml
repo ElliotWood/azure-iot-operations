@@ -26,6 +26,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    # Deploy log analytics
+    - name: deploy sshKey
+      id: deploy_sshKey
+      uses: azure/arm-deploy@v1
+      with:
+         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
+         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
+         template: ./infra/AKS/sshKey.bicep
+         failOnStdErr: false    
+
     # Deploy kevault 
     - name: deploy kevault
       id: deploy_key_vault
@@ -34,10 +44,10 @@ jobs:
        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
        resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
        template: ./infra/AKS/kevault.bicep
-       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }}
+       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} sshPublicKey=${{ steps.deploy_sshKey.outputs.sshPublicKey }}
        failOnStdErr: false
     
-       # Deploy log analytics
+    # Deploy log analytics
     - name: deploy log analytics
       id: deploy_log_analytics
       uses: azure/arm-deploy@v1
@@ -55,7 +65,7 @@ jobs:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
         template: ./infra/AKS/aks.bicep
-        parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} logAnalyticsWorkspaceResourceID=${{ steps.deploy_log_analytics.outputs.logAnalyticsWorkspaceId }}
+        parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} logAnalyticsWorkspaceResourceID=${{ steps.deploy_log_analytics.outputs.logAnalyticsWorkspaceId }} sshRSAPublicKey=${{ steps.deploy_sshKey.outputs.sshPublicKey }}
         failOnStdErr: false
     
     # Deploy arc

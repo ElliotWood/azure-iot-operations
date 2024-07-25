@@ -14,6 +14,9 @@ param servicePrincipalClientId string
 @description('The secret password associated with the service principal.')
 param servicePrincipalClientSecret string
 
+@secure()
+@description('Configure all linux machines with the SSH RSA public key string. Your key should include three parts, for example \'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm\'')
+param sshPublicKey string
 
 resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   name: keyVaultName
@@ -57,6 +60,14 @@ resource clientSecretSecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-previe
   parent: keyVault
   properties: {
     value: servicePrincipalClientSecret
+  }
+}
+
+resource sshKeySecret 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
+  name: 'sshPublicKey'
+  parent: keyVault
+  properties: {
+    value: sshPublicKey
   }
 }
 

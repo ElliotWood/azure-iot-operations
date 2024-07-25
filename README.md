@@ -72,7 +72,15 @@ Deployment of AIO through GitOps, there are some additional steps you will need 
         in your fork. Repository secrets can be found under **Settings** > **Secrets and
        variables** > **Actions**. To learn more, see [creating secrets for a repository](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
-2. Enable GitHub actions on the fork.
+2. Set the `sshRSAPublicKey` repository secret or use the gitops workflow to generate one automaticlly.
+
+    1. SSH public key.
+
+    ```bash
+    ssh-keygen -m PEM -t rsa -b 4096
+    ```
+
+3. Enable GitHub actions on the fork.
 
     1. On the forked repo, select **Actions** and select **I understand my workflows, go ahead and enable them.**
 
@@ -115,3 +123,4 @@ Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/S
 3. [Quickstart: Deploy an Azure Kubernetes Service (AKS) cluster using Bicep](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-bicep?tabs=azure-cli)
 4. [Create an Azure Kubernetes Service (AKS) cluster with API Server VNET Integration using Bicep](https://github.com/Azure-Samples/aks-api-server-vnet-integration-bicep/tree/main)
 5. [Private AKS with bicep](https://github.com/vakappas/private-aks-bicep/blob/main/README.md)
+6. [mq-onelake-upload](https://github.com/Azure-Samples/explore-iot-operations/blob/main/tutorials/mq-onelake-upload/deployBaseResources.bicep)

@@ -27,6 +27,12 @@ param servicePrincipalClientId string
 @description('The secret password associated with the service principal.')
 param servicePrincipalClientSecret string
 
+@description('User name for the Linux Virtual Machines.')
+param linuxAdminUsername string = 'admin'
+
+@description('Configure all linux machines with the SSH RSA public key string. Your key should include three parts, for example \'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm\'')
+param sshRSAPublicKey string
+
 @description('Log Analytics Workspace Resource ID')
 param logAnalyticsWorkspaceResourceID string
 
@@ -49,6 +55,16 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
       clientId: servicePrincipalClientId
       secret: servicePrincipalClientSecret
     }
+    linuxProfile: {
+      adminUsername: linuxAdminUsername
+      ssh: {
+        publicKeys: [
+          {
+            keyData: sshRSAPublicKey
+          }
+        ]
+      }
+    }
     addonProfiles: {
       azurePolicy: {
         enabled: true
@@ -64,5 +80,5 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
   }
 }
 
-output controlPlaneFQDN string = aksCluster.properties.azurePortalFQDN
+output controlPlaneFQDN string = aksCluster.properties.privateFQDN
 output aksClusterName string = aksCluster.name

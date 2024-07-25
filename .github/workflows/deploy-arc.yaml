@@ -1,4 +1,4 @@
-name: Deploy AKS, Key Vault, and Arc
+name: Deploy Arc
 on:
     workflow_dispatch:
         inputs:
@@ -13,11 +13,15 @@ on:
             type: string
             default: 'ewakstest'
           clusterName:
-              description: 'The rArc-enabled cluster name.'
+              description: 'The Arc-enabled cluster name.'
               required: true
               type: string
-              default: 'arcakscluster'
-
+              default: 'ewakstestaks'
+          KeyVaultName:
+              description: 'The KeyVault name.'
+              required: true
+              type: string
+              default: 'ewakstestkv'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -41,3 +45,18 @@ jobs:
         template: ./infra/AKS/arc.bicep
         parameters: clusterName=${{ github.event.inputs.clusterName }}
         failOnStdErr: false
+
+    # Deploy AIO via cli
+    - name: Deploy AIO to Arc-enabled Cluster
+      id: deploy_aio_cli
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az iot ops init \
+              --cluster ${{ github.event.inputs.clusterName }} \ 
+              --resource-group ${{ github.event.inputs.clusterResourceGroup }} \ 
+              --kv-id ${{ github.event.inputs.keyVaultName }} \
+              --sp-app-id ${{ secrets.CLIENT_ID }}  \
+              --sp-secret ${{ secrets.CLIENT_SECRET }} \
+              --kv-sat-secret-name servicePrincipalClientSecret
+              --no-deploy

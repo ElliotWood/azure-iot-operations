@@ -2,7 +2,7 @@
 param location string = resourceGroup().location
 
 @description('Name of the AKS Cluster.')
-param clusterName string = 'arcakscluster'
+param clusterName string = '${resourceGroup().name}aks'
 
 @description('DNS prefix to use with the hosted Kubernetes API server FQDN.')
 param dnsPrefix string = 'arcaks'

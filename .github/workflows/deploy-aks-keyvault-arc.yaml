@@ -34,6 +34,7 @@ jobs:
          subscriptionId: ${{ github.event.inputs.clusterSubscription }}
          resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
          template: ./infra/AKS/sshKey.bicep
+         parameters: sshRSAPublicKey=${{ secrets.RSA_PUBLIC_KEY }}
          failOnStdErr: false    
 
     # Deploy kevault 

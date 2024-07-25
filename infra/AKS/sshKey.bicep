@@ -1,4 +1,4 @@
-param sshKeyName string = 'sshPublicKey${resourceGroup()}'
+param sshKeyName string = 'sshPublicKey'
 param location string = resourceGroup().location
 @secure()
 param optionalPublicKey string = ''

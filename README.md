@@ -113,3 +113,5 @@ Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/S
 1. [Deploy apps to Azure-Arc enabled Kubernetes cluster using 'Cluster Connect' and 'GitHub Actions'](https://techcommunity.microsoft.com/t5/azure-arc-blog/deploy-apps-to-azure-arc-enabled-kubernetes-cluster-using/ba-p/3286541)
 2. [aksbicep](https://github.com/jaydestro/aksbicep/tree/main)
 3. [Quickstart: Deploy an Azure Kubernetes Service (AKS) cluster using Bicep](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-bicep?tabs=azure-cli)
+4. [Create an Azure Kubernetes Service (AKS) cluster with API Server VNET Integration using Bicep](https://github.com/Azure-Samples/aks-api-server-vnet-integration-bicep/tree/main)
+5. [Private AKS with bicep](https://github.com/vakappas/private-aks-bicep/blob/main/README.md)

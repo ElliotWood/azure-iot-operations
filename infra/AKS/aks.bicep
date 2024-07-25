@@ -27,8 +27,8 @@ param servicePrincipalClientId string
 @description('The secret password associated with the service principal.')
 param servicePrincipalClientSecret string
 
-// @description('Log Analytics Workspace Resource ID')
-// param logAnalyticsWorkspaceResourceID string
+@description('Log Analytics Workspace Resource ID')
+param logAnalyticsWorkspaceResourceID string
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
   name: clusterName
@@ -53,12 +53,12 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
       azurePolicy: {
         enabled: true
       }
-      // omsagent: {
-      //   enabled: true
-      //   config: {
-      //     logAnalyticsWorkspaceResourceID: logAnalyticsWorkspaceResourceID
-      //   }
-      // }
+      omsagent: {
+        enabled: true
+        config: {
+          logAnalyticsWorkspaceResourceID: logAnalyticsWorkspaceResourceID
+        }
+      }
     }
     enableRBAC: true
   }

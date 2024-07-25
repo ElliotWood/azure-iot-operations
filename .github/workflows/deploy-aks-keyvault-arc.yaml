@@ -36,6 +36,16 @@ jobs:
        template: ./infra/AKS/kevault.bicep
        parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }}
        failOnStdErr: false
+    
+       # Deploy log analytics
+    - name: deploy log analytics
+      id: deploy_log_analytics
+      uses: azure/arm-deploy@v1
+      with:
+         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
+         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
+         template: ./infra/AKS/loganalytics.bicep
+         failOnStdErr: false    
 
     # Deploy AKS
     - name: deploy AKS
@@ -45,18 +55,8 @@ jobs:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
         template: ./infra/AKS/aks.bicep
-        parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }}
+        parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} logAnalyticsWorkspaceResourceID=${{ steps.deploy_log_analytics.outputs.logAnalyticsWorkspaceId }}
         failOnStdErr: false
-      
-    # Deploy log analytics
-    - name: deploy log analytics
-      id: deploy_log_analytics
-      uses: azure/arm-deploy@v1
-      with:
-         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
-         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
-         template: ./infra/AKS/loganalytics.bicep
-         failOnStdErr: false     
     
     # Deploy arc
     - name: deploy arc

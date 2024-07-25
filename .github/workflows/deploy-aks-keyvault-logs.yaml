@@ -1,4 +1,4 @@
-name: Deploy AKS, Key Vault, and Arc
+name: Deploy AKS, Key Vault, Log Analytics
 on:
     workflow_dispatch:
         inputs:
@@ -57,27 +57,3 @@ jobs:
         template: ./infra/AKS/aks.bicep
         parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} logAnalyticsWorkspaceResourceID=${{ steps.deploy_log_analytics.outputs.logAnalyticsWorkspaceId }} sshRSAPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
         failOnStdErr: false
-    
-    # Deploy arc
-    - name: deploy arc
-      id: deploy_arc
-      uses: azure/arm-deploy@v1
-      with:
-        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
-        resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
-        template: ./infra/AKS/arc.bicep
-        parameters: clusterName=${{ steps.deploy_aks.outputs.aksClusterName }}
-        failOnStdErr: false
-
-    - name: Deploy AIO to Arc-enabled Cluster
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-          az iot ops init \
-            --cluster ${{ steps.deploy_aks.outputs.aksClusterName }} \ 
-            --resource-group ${{ github.event.inputs.clusterResourceGroup }} \ 
-            --kv-id ${{ steps.deploy_key_vault.outputs.keyVaultName }} \
-            --sp-app-id ${{ secrets.CLIENT_ID }}  \
-            --sp-secret ${{ secrets.CLIENT_SECRET }} \
-            --kv-sat-secret-name servicePrincipalClientSecret
-            --no-deploy

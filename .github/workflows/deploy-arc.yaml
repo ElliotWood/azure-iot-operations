@@ -1,0 +1,43 @@
+name: Deploy AKS, Key Vault, and Arc
+on:
+    workflow_dispatch:
+        inputs:
+          clusterSubscription:
+            description: 'The subscription ID where the Arc-enabled cluster is.'
+            required: true
+            type: string
+            default: '5f5dd16b-0879-4c86-884f-30347411b95f'
+          clusterResourceGroup:
+            description: 'The resource group where the Arc-enabled cluster is.'
+            required: true
+            type: string
+            default: 'ewakstest'
+          clusterName:
+              description: 'The rArc-enabled cluster name.'
+              required: true
+              type: string
+              default: 'arcakscluster'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Deploy arc
+    - name: deploy arc
+      id: deploy_arc
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
+        resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
+        template: ./infra/AKS/arc.bicep
+        parameters: clusterName=${{ github.event.inputs.clusterName }}
+        failOnStdErr: false

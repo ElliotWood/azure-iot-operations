@@ -28,7 +28,7 @@ param servicePrincipalClientId string
 param servicePrincipalClientSecret string
 
 @description('User name for the Linux Virtual Machines.')
-param linuxAdminUsername string = 'admin'
+param linuxAdminUsername string = '${resourceGroup().name}_admin'
 
 @description('Configure all linux machines with the SSH RSA public key string. Your key should include three parts, for example \'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm\'')
 param sshRSAPublicKey string

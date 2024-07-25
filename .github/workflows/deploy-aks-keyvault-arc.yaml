@@ -26,17 +26,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # Deploy log analytics
-    - name: deploy sshKey
-      id: deploy_sshKey
-      uses: azure/arm-deploy@v1
-      with:
-         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
-         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
-         template: ./infra/AKS/sshKey.bicep
-         parameters: sshRSAPublicKey=${{ secrets.RSA_PUBLIC_KEY }}
-         failOnStdErr: false    
-
     # Deploy kevault 
     - name: deploy kevault
       id: deploy_key_vault
@@ -45,7 +34,7 @@ jobs:
        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
        resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
        template: ./infra/AKS/kevault.bicep
-       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} sshPublicKey=${{ steps.deploy_sshKey.outputs.sshPublicKey }}
+       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} sshPublicKey=${{ secrets.RSA_PUBLIC_KEY }}
        failOnStdErr: false
     
     # Deploy log analytics
@@ -66,7 +55,7 @@ jobs:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
         template: ./infra/AKS/aks.bicep
-        parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} logAnalyticsWorkspaceResourceID=${{ steps.deploy_log_analytics.outputs.logAnalyticsWorkspaceId }} sshRSAPublicKey=${{ steps.deploy_sshKey.outputs.sshPublicKey }}
+        parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} logAnalyticsWorkspaceResourceID=${{ steps.deploy_log_analytics.outputs.logAnalyticsWorkspaceId }} sshRSAPublicKey=${{ secrets.RSA_PUBLIC_KEY }}
         failOnStdErr: false
     
     # Deploy arc

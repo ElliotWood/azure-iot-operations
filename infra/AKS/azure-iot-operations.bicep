@@ -501,7 +501,7 @@ resource target 'Microsoft.IoTOperationsOrchestrator/Targets@2023-10-04-preview'
 output customLocationId string = customLocation.id
 output customLocationName string = customLocationName
 output targetName string = targetName
-output processorInstanceName string = processorInstance.name
+// output processorInstanceName string = processorInstance.name
 output aioNamespace string = AIO_CLUSTER_RELEASE_NAMESPACE
 output mq object = MQ_PROPERTIES
 output observability object = OBSERVABILITY

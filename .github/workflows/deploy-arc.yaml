@@ -45,6 +45,14 @@ jobs:
         template: ./infra/AKS/arc.bicep
         parameters: clusterName=${{ github.event.inputs.clusterName }} sshRSAPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
         failOnStdErr: false
+    
+    # Install AIO via cli
+    - name: Install 
+      id: install_aio_cli
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az extension add --upgrade --name azure-iot-ops 
 
     # Deploy AIO via cli
     - name: Deploy AIO to Arc-enabled Cluster
@@ -52,12 +60,17 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          az iot ops init \
-            --allow-preview true \
-            --cluster "${{ github.event.inputs.clusterName }}" \ 
-            --resource-group "${{ github.event.inputs.clusterResourceGroup }}" \ 
-            --kv-id "/subscriptions/${{ github.event.inputs.clusterSubscription }}/resourceGroups/${{ github.event.inputs.clusterResourceGroup }}/providers/Microsoft.KeyVault/vaults/${{ github.event.inputs.keyVaultName }}" \
+          az iot ops init --resource-group "${{ github.event.inputs.clusterResourceGroup }}" --cluster "${{ github.event.inputs.clusterName }}" --kv-id "/subscriptions/${{ github.event.inputs.clusterSubscription }}/resourceGroups/${{ github.event.inputs.clusterResourceGroup }}/providers/Microsoft.KeyVault/vaults/${{ github.event.inputs.keyVaultName }}" \
             --sp-app-id "${{ secrets.CLIENT_ID }}"  \
             --sp-secret "${{ secrets.CLIENT_SECRET }}" \
             --kv-sat-secret-name "servicePrincipalClientSecret"
-            --no-deploy
+            --allow-preview true
+            --no-deploy \
+    
+    # Verify AIO via cli
+    - name: Verify 
+      id: verify_aio_cli
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az iot ops check

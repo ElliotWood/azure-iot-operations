@@ -1,4 +1,4 @@
-name: Deploy Arc
+name: Deploy Cluster to Arc
 on:
     workflow_dispatch:
         inputs:

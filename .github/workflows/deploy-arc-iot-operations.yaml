@@ -43,7 +43,7 @@ jobs:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
         template: ./infra/AKS/azure-iot-operations.bicep
-        parameters: clusterName=${{ github.event.inputs.clusterName }} sshRSAPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
+        parameters: clusterName=${{ github.event.inputs.clusterName }}
         failOnStdErr: false
 
         

@@ -18,15 +18,15 @@ param customLocationName string = '${clusterName}-cl'
 @description('Name of a specific deployment environment, such as a Kubernetes cluster or an edge device. The default is the cluster name suffixed with "-target".')
 param targetName string = '${toLower(clusterName)}-target'
 
-@description('Name of data processor instance. The default is the cluster name suffixed with "-processor".')
-param dataProcessorInstanceName string = '${toLower(clusterName)}-processor'
+// @description('Name of data processor instance. The default is the cluster name suffixed with "-processor".')
+// param dataProcessorInstanceName string = '${toLower(clusterName)}-processor'
 
-@description('Data Processor secrets.')
-#disable-next-line secure-secrets-in-params
-param dataProcessorSecrets object = {
-  secretProviderClassName: 'aio-default-spc'
-  servicePrincipalSecretRef: 'aio-akv-sp'
-}
+// @description('Data Processor secrets.')
+// #disable-next-line secure-secrets-in-params
+// param dataProcessorSecrets object = {
+//   secretProviderClassName: 'aio-default-spc'
+//   servicePrincipalSecretRef: 'aio-akv-sp'
+// }
 
 @description('MQ secrets.')
 #disable-next-line secure-secrets-in-params
@@ -36,12 +36,12 @@ param mqSecrets object = {
   servicePrincipalSecretRef: 'aio-akv-sp'
 }
 
-@description('Data Processor cardinality.')
-param dataProcessorCardinality object = {
-  readerWorker: 1
-  runnerWorker: 1
-  messageStore: 1
-}
+// @description('Data Processor cardinality.')
+// param dataProcessorCardinality object = {
+//   readerWorker: 1
+//   runnerWorker: 1
+//   messageStore: 1
+// }
 
 @description('Flag to enable resource sync rules. The default is true.')
 param deployResourceSyncRules bool = true
@@ -180,36 +180,36 @@ resource mq_extension 'Microsoft.KubernetesConfiguration/extensions@2022-03-01' 
   ]
 }
 
-resource dataProcessor_extension 'Microsoft.KubernetesConfiguration/extensions@2022-03-01' = {
-  scope: cluster
-  name: 'processor'
-  identity: {
-    type: 'SystemAssigned'
-  }
-  properties: {
-    extensionType: 'microsoft.iotoperations.dataprocessor'
-    version: VERSIONS.processor
-    releaseTrain: TRAINS.processor
-    autoUpgradeMinorVersion: false
-    scope: AIO_EXTENSION_SCOPE
-    configurationSettings: {
-      'Microsoft.CustomLocation.ServiceAccount': 'default'
-      otelCollectorAddress: OBSERVABILITY.otelCollectorAddressNoProtocol
-      genevaCollectorAddress: OBSERVABILITY.genevaCollectorAddressNoProtocol
-      'cardinality.readerWorker.replicas': dataProcessorCardinality.readerWorker
-      'cardinality.runnerWorker.replicas': dataProcessorCardinality.runnerWorker
-      'nats.config.cluster.replicas': dataProcessorCardinality.messageStore
-      'secrets.secretProviderClassName': dataProcessorSecrets.secretProviderClassName
-      'secrets.servicePrincipalSecretRef': dataProcessorSecrets.servicePrincipalSecretRef
-      'caTrust.enabled': 'true'
-      'caTrust.configmapName': AIO_TRUST_CONFIG_MAP
-      'serviceAccountTokens.MQClient.audience': MQ_PROPERTIES.satAudience
-    }
-  }
-  dependsOn: [
-    aio_extension
-  ]
-}
+// resource dataProcessor_extension 'Microsoft.KubernetesConfiguration/extensions@2022-03-01' = {
+//   scope: cluster
+//   name: 'processor'
+//   identity: {
+//     type: 'SystemAssigned'
+//   }
+//   properties: {
+//     extensionType: 'microsoft.iotoperations.dataprocessor'
+//     version: VERSIONS.processor
+//     releaseTrain: TRAINS.processor
+//     autoUpgradeMinorVersion: false
+//     scope: AIO_EXTENSION_SCOPE
+//     configurationSettings: {
+//       'Microsoft.CustomLocation.ServiceAccount': 'default'
+//       otelCollectorAddress: OBSERVABILITY.otelCollectorAddressNoProtocol
+//       genevaCollectorAddress: OBSERVABILITY.genevaCollectorAddressNoProtocol
+//       'cardinality.readerWorker.replicas': dataProcessorCardinality.readerWorker
+//       'cardinality.runnerWorker.replicas': dataProcessorCardinality.runnerWorker
+//       'nats.config.cluster.replicas': dataProcessorCardinality.messageStore
+//       'secrets.secretProviderClassName': dataProcessorSecrets.secretProviderClassName
+//       'secrets.servicePrincipalSecretRef': dataProcessorSecrets.servicePrincipalSecretRef
+//       'caTrust.enabled': 'true'
+//       'caTrust.configmapName': AIO_TRUST_CONFIG_MAP
+//       'serviceAccountTokens.MQClient.audience': MQ_PROPERTIES.satAudience
+//     }
+//   }
+//   dependsOn: [
+//     aio_extension
+//   ]
+// }
 
 resource dapr_extension 'Microsoft.KubernetesConfiguration/extensions@2022-03-01' = {
   scope: cluster
@@ -259,7 +259,7 @@ resource customLocation 'Microsoft.ExtendedLocation/customLocations@2021-08-31-p
       aio_extension.id
       mq_extension.id
       deviceRegistry_extension.id
-      dataProcessor_extension.id
+      // dataProcessor_extension.id
     ]
   }
 }
@@ -280,24 +280,24 @@ resource orchestrator_syncRule 'Microsoft.ExtendedLocation/customLocations/resou
   }
 }
 
-resource dataProcessor_syncRule 'Microsoft.ExtendedLocation/customLocations/resourceSyncRules@2021-08-31-preview' = if (deployResourceSyncRules) {
-  parent: customLocation
-  name: '${customLocationName}-dp-sync'
-  location: clusterLocation
-  properties: {
-    priority: 300
-    selector: {
-      matchLabels: {
-        #disable-next-line no-hardcoded-env-urls
-        'management.azure.com/provider-name': 'microsoft.iotoperationsdataprocessor'
-      }
-    }
-    targetResourceGroup: resourceGroup().id
-  }
-  dependsOn: [
-    orchestrator_syncRule
-  ]
-}
+// resource dataProcessor_syncRule 'Microsoft.ExtendedLocation/customLocations/resourceSyncRules@2021-08-31-preview' = if (deployResourceSyncRules) {
+//   parent: customLocation
+//   name: '${customLocationName}-dp-sync'
+//   location: clusterLocation
+//   properties: {
+//     priority: 300
+//     selector: {
+//       matchLabels: {
+//         #disable-next-line no-hardcoded-env-urls
+//         'management.azure.com/provider-name': 'microsoft.iotoperationsdataprocessor'
+//       }
+//     }
+//     targetResourceGroup: resourceGroup().id
+//   }
+//   dependsOn: [
+//     orchestrator_syncRule
+//   ]
+// }
 
 resource mq_syncRule 'Microsoft.ExtendedLocation/customLocations/resourceSyncRules@2021-08-31-preview' = if (deployResourceSyncRules) {
   parent: customLocation
@@ -314,7 +314,7 @@ resource mq_syncRule 'Microsoft.ExtendedLocation/customLocations/resourceSyncRul
     targetResourceGroup: resourceGroup().id
   }
   dependsOn: [
-    dataProcessor_syncRule
+    // dataProcessor_syncRule
   ]
 }
 
@@ -341,18 +341,18 @@ resource deviceRegistry_syncRule 'Microsoft.ExtendedLocation/customLocations/res
 /*               Azure IoT Operations Data Processor Instance.               */
 /*****************************************************************************/
 
-resource processorInstance 'Microsoft.IoTOperationsDataProcessor/instances@2023-10-04-preview' = {
-  name: dataProcessorInstanceName
-  location: location
-  extendedLocation: {
-    name: customLocation.id
-    type: 'CustomLocation'
-  }
-  properties: {}
-  dependsOn: [
-    dataProcessor_syncRule
-  ]
-}
+// resource processorInstance 'Microsoft.IoTOperationsDataProcessor/instances@2023-10-04-preview' = {
+//   name: dataProcessorInstanceName
+//   location: location
+//   extendedLocation: {
+//     name: customLocation.id
+//     type: 'CustomLocation'
+//   }
+//   properties: {}
+//   dependsOn: [
+//     dataProcessor_syncRule
+//   ]
+// }
 
 /*****************************************************************************/
 /*     Deployment of Helm Charts and CRs to run on Arc-enabled cluster.      */

@@ -43,7 +43,7 @@ jobs:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
         template: ./infra/AKS/azure-iot-operations.bicep
-        parameters: clusterName=${{ github.event.inputs.clusterName }}
+        parameters: clusterName=${{ github.event.inputs.clusterName }} location="southeastasia"
         failOnStdErr: false
 
         

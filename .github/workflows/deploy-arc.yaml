@@ -53,10 +53,11 @@ jobs:
       with:
         inlineScript: |
           az iot ops init \
-              --cluster ${{ github.event.inputs.clusterName }} \ 
-              --resource-group ${{ github.event.inputs.clusterResourceGroup }} \ 
-              --kv-id ${{ github.event.inputs.keyVaultName }} \
-              --sp-app-id ${{ secrets.CLIENT_ID }}  \
-              --sp-secret ${{ secrets.CLIENT_SECRET }} \
-              --kv-sat-secret-name servicePrincipalClientSecret
-              --no-deploy
+            --allow-preview true \
+            --cluster "${{ github.event.inputs.clusterName }}" \ 
+            --resource-group "${{ github.event.inputs.clusterResourceGroup }}" \ 
+            --kv-id "/subscriptions/${{ github.event.inputs.clusterSubscription }}/resourceGroups/${{ github.event.inputs.clusterResourceGroup }}/providers/Microsoft.KeyVault/vaults/${{ github.event.inputs.keyVaultName }}" \
+            --sp-app-id "${{ secrets.CLIENT_ID }}"  \
+            --sp-secret "${{ secrets.CLIENT_SECRET }}" \
+            --kv-sat-secret-name "servicePrincipalClientSecret"
+            --no-deploy

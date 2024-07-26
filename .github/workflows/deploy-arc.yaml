@@ -63,7 +63,6 @@ jobs:
           az iot ops init --resource-group "${{ github.event.inputs.clusterResourceGroup }}" --cluster "${{ github.event.inputs.clusterName }}" --kv-id "/subscriptions/${{ github.event.inputs.clusterSubscription }}/resourceGroups/${{ github.event.inputs.clusterResourceGroup }}/providers/Microsoft.KeyVault/vaults/${{ github.event.inputs.keyVaultName }}" \
             --sp-app-id "${{ secrets.CLIENT_ID }}"  \
             --sp-secret "${{ secrets.CLIENT_SECRET }}" \
-            --allow-preview true
             --no-deploy \
     
     # Verify AIO via cli

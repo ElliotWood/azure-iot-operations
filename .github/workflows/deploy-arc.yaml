@@ -11,17 +11,17 @@ on:
             description: 'The resource group where the Arc-enabled cluster is.'
             required: true
             type: string
-            default: 'ewakstest'
+            default: 'arctest001'
           clusterName:
               description: 'The Arc-enabled cluster name.'
               required: true
               type: string
-              default: 'ewakstestaks'
+              default: 'arctest001aks'
           KeyVaultName:
               description: 'The KeyVault name.'
               required: true
               type: string
-              default: 'ewakstestkv'
+              default: 'arctest001kv'
 jobs:
   deploy:
     runs-on: ubuntu-latest

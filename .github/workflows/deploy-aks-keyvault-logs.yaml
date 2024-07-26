@@ -11,7 +11,7 @@ on:
             description: 'The resource group where to create the Arc-enabled cluster.'
             required: true
             type: string
-            default: 'ewakstest'
+            default: 'arctest001'
 
 jobs:
   deploy:

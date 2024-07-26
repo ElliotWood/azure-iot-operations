@@ -1,4 +1,4 @@
-name: Deploy Arc
+name: Deploy Arc IoT Operations
 on:
     workflow_dispatch:
         inputs:
@@ -36,12 +36,29 @@ jobs:
       uses: actions/checkout@v2
 
     # Deploy arc
-    - name: deploy arc
-      id: deploy_arc
+    - name: deploy aoi
+      id: deploy_aoi
       uses: azure/arm-deploy@v1
       with:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
-        template: ./infra/AKS/arc.bicep
+        template: ./infra/AKS/azure-iot-operations.bicep
         parameters: clusterName=${{ github.event.inputs.clusterName }} sshRSAPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
         failOnStdErr: false
+
+        
+    
+    # # Deploy AIO via cli
+    # - name: Deploy AIO to Arc-enabled Cluster
+    #   id: deploy_aio_cli
+    #   uses: azure/CLI@v1
+    #   with:
+    #     inlineScript: |
+    #       az extension add --upgrade --name azure-iot-ops \
+
+    #       az iot ops init --resource-group "${{ github.event.inputs.clusterResourceGroup }}" --cluster "${{ github.event.inputs.clusterName }}" --kv-id "/subscriptions/${{ github.event.inputs.clusterSubscription }}/resourceGroups/${{ github.event.inputs.clusterResourceGroup }}/providers/Microsoft.KeyVault/vaults/${{ github.event.inputs.keyVaultName }}" \
+    #         --sp-app-id "${{ secrets.CLIENT_ID }}"  \
+    #         --sp-secret "${{ secrets.CLIENT_SECRET }}" \
+    #         --no-deploy \
+
+    #         az iot ops check

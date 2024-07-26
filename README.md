@@ -124,3 +124,4 @@ Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/S
 4. [Create an Azure Kubernetes Service (AKS) cluster with API Server VNET Integration using Bicep](https://github.com/Azure-Samples/aks-api-server-vnet-integration-bicep/tree/main)
 5. [Private AKS with bicep](https://github.com/vakappas/private-aks-bicep/blob/main/README.md)
 6. [mq-onelake-upload](https://github.com/Azure-Samples/explore-iot-operations/blob/main/tutorials/mq-onelake-upload/deployBaseResources.bicep)
+7. [azure-edge-extensions-aio-dp-jumpstart](https://github.com/Azure-Samples/azure-edge-extensions-aio-dp-jumpstart/tree/main)

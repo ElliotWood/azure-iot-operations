@@ -43,7 +43,7 @@ jobs:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
         template: ./infra/AKS/arc.bicep
-        parameters: clusterName=${{ github.event.inputs.clusterName }}
+        parameters: clusterName=${{ github.event.inputs.clusterName }} sshRSAPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
         failOnStdErr: false
 
     # Deploy AIO via cli

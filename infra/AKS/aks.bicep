@@ -83,25 +83,26 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
   }
 }
 
-resource eventGridExtension 'Microsoft.ContainerService/managedClusters/extensions@2021-05-01' = {
-  name: 'eventGrid'
-  parent: aksCluster
-  location: resourceGroup().location
-  properties: {
-    autoUpgradeMinorVersion: true
-    extensionType: 'microsoft.eventgrid'
-    // configurationSettings: {
-    //   EventType: 'AKS'
-    // }
-    identity: {
-      type: 'SystemAssigned'
-    }
-    // servicePrincipalProfile: {
-    //   clientId: servicePrincipalClientId
-    //   secret: servicePrincipalClientSecret
-    // }
-  }
-}
+
+// resource eventGridExtension 'Microsoft.ContainerService/managedClusters/extensions@2021-05-01' = {
+//   name: 'eventGrid'
+//   parent: clusterName
+//   location: resourceGroup().location
+//   properties: {
+//     autoUpgradeMinorVersion: true
+//     extensionType: 'microsoft.eventgrid'
+//     // configurationSettings: {
+//     //   EventType: 'AKS'
+//     // }
+//     identity: {
+//       type: 'SystemAssigned'
+//     }
+//     // servicePrincipalProfile: {
+//     //   clientId: servicePrincipalClientId
+//     //   secret: servicePrincipalClientSecret
+//     // }
+//   }
+// }
 
 output controlPlaneFQDN string = aksCluster.properties.azurePortalFQDN
 output aksClusterName string = aksCluster.name

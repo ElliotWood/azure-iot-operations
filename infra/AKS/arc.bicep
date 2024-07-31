@@ -14,3 +14,4 @@ resource connectedCluster 'Microsoft.Kubernetes/connectedClusters@2022-10-01-pre
     agentPublicKeyCertificate: sshRSAPublicKey
   }
 }
+

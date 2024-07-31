@@ -34,8 +34,9 @@ jobs:
        subscriptionId: ${{ github.event.inputs.clusterSubscription }}
        resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
        template: ./infra/AKS/kevault.bicep
-       parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} sshPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
+       parameters: sshPublicKey="${{ secrets.RSA_PUBLIC_KEY }}" 
        failOnStdErr: false
+       #servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }}
     
     # Deploy log analytics
     - name: deploy log analytics
@@ -55,5 +56,6 @@ jobs:
         subscriptionId: ${{ github.event.inputs.clusterSubscription }}
         resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
         template: ./infra/AKS/aks.bicep
-        parameters: servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} logAnalyticsWorkspaceResourceID=${{ steps.deploy_log_analytics.outputs.logAnalyticsWorkspaceId }} sshRSAPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
+        parameters: logAnalyticsWorkspaceResourceID=${{ steps.deploy_log_analytics.outputs.logAnalyticsWorkspaceId }} sshRSAPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
         failOnStdErr: false
+        #servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} 

@@ -20,12 +20,12 @@ param agentCount int = 3
 @description('The size of the Virtual Machine.')
 param agentVMSize string = 'standard_d2s_v3'
 
-@description('The ID for the service principal.')
-param servicePrincipalClientId string
+// @description('The ID for the service principal.')
+// param servicePrincipalClientId string
 
-@secure()
-@description('The secret password associated with the service principal.')
-param servicePrincipalClientSecret string
+// @secure()
+// @description('The secret password associated with the service principal.')
+// param servicePrincipalClientSecret string
 
 @description('User name for the Linux Virtual Machines.')
 param linuxAdminUsername string = '${resourceGroup().name}_admin'
@@ -51,9 +51,12 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
         mode: 'System'
       }
     ]
-    servicePrincipalProfile: {
-      clientId: servicePrincipalClientId
-      secret: servicePrincipalClientSecret
+    // servicePrincipalProfile: {
+    //   clientId: servicePrincipalClientId
+    //   secret: servicePrincipalClientSecret
+    // }
+    identity: {
+      type: 'SystemAssigned'
     }
     linuxProfile: {
       adminUsername: linuxAdminUsername
@@ -77,6 +80,26 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
       }
     }
     enableRBAC: true
+  }
+}
+
+resource eventGridExtension 'Microsoft.ContainerService/managedClusters/extensions@2021-05-01' = {
+  name: 'eventGrid'
+  parent: aksCluster
+  location: resourceGroup().location
+  properties: {
+    autoUpgradeMinorVersion: true
+    extensionType: 'microsoft.eventgrid'
+    configurationSettings: {
+      EventType: 'AKS'
+    }
+    identity: {
+      type: 'SystemAssigned'
+    }
+    // servicePrincipalProfile: {
+    //   clientId: servicePrincipalClientId
+    //   secret: servicePrincipalClientSecret
+    // }
   }
 }
 

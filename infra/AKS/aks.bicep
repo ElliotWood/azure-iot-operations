@@ -105,3 +105,4 @@ resource eventGridExtension 'Microsoft.ContainerService/managedClusters/extensio
 
 output controlPlaneFQDN string = aksCluster.properties.azurePortalFQDN
 output aksClusterName string = aksCluster.name
+output servicePrincipalClientId string = any(aksCluster.properties.identityProfile.kubeletidentity).objectId

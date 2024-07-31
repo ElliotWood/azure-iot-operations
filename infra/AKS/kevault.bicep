@@ -10,9 +10,9 @@ param tenantId string = tenant().tenantId
 @description('Client ID of the service principal.')
 param servicePrincipalClientId string
 
-@secure()
-@description('The secret password associated with the service principal.')
-param servicePrincipalClientSecret string
+// @secure()
+// @description('The secret password associated with the service principal.')
+// param servicePrincipalClientSecret string
 
 @secure()
 @description('Configure all linux machines with the SSH RSA public key string. Your key should include three parts, for example \'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm\'')

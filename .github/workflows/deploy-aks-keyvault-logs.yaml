@@ -26,18 +26,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    # Deploy kevault 
-    - name: deploy kevault
-      id: deploy_key_vault
-      uses: azure/arm-deploy@v1
-      with:
-       subscriptionId: ${{ github.event.inputs.clusterSubscription }}
-       resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
-       template: ./infra/AKS/kevault.bicep
-       parameters: sshPublicKey="${{ secrets.RSA_PUBLIC_KEY }}" 
-       failOnStdErr: false
-       #servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }}
-    
     # Deploy log analytics
     - name: deploy log analytics
       id: deploy_log_analytics
@@ -59,3 +47,15 @@ jobs:
         parameters: logAnalyticsWorkspaceResourceID=${{ steps.deploy_log_analytics.outputs.logAnalyticsWorkspaceId }} sshRSAPublicKey="${{ secrets.RSA_PUBLIC_KEY }}"
         failOnStdErr: false
         #servicePrincipalClientId=${{ secrets.CLIENT_ID }} servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }} 
+
+    # Deploy kevault 
+    - name: deploy kevault
+      id: deploy_key_vault
+      uses: azure/arm-deploy@v1
+      with:
+       subscriptionId: ${{ github.event.inputs.clusterSubscription }}
+       resourceGroupName: ${{ github.event.inputs.clusterResourceGroup }}
+       template: ./infra/AKS/kevault.bicep
+       parameters: sshPublicKey="${{ secrets.RSA_PUBLIC_KEY }}" servicePrincipalClientId=${{ steps.deploy_aks.outputs.servicePrincipalClientId }}
+       failOnStdErr: false
+       # servicePrincipalClientSecret=${{ secrets.CLIENT_SECRET }}

@@ -39,6 +39,9 @@ param logAnalyticsWorkspaceResourceID string
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
   name: clusterName
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     dnsPrefix: dnsPrefix
     agentPoolProfiles: [
@@ -55,9 +58,6 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-01' = {
     //   clientId: servicePrincipalClientId
     //   secret: servicePrincipalClientSecret
     // }
-    identity: {
-      type: 'SystemAssigned'
-    }
     linuxProfile: {
       adminUsername: linuxAdminUsername
       ssh: {
@@ -90,9 +90,9 @@ resource eventGridExtension 'Microsoft.ContainerService/managedClusters/extensio
   properties: {
     autoUpgradeMinorVersion: true
     extensionType: 'microsoft.eventgrid'
-    configurationSettings: {
-      EventType: 'AKS'
-    }
+    // configurationSettings: {
+    //   EventType: 'AKS'
+    // }
     identity: {
       type: 'SystemAssigned'
     }

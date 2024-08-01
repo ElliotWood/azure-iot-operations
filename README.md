@@ -9,7 +9,7 @@ meant for publicly sharing the releases of AIO and not shared development of AIO
 Please see the [Azure IoT Operations documentation](https://aka.ms/AIOdocs) for more information. To learn how to
 deploy AIO using GitOps, see the [Deploy to cluster documentation](https://learn.microsoft.com/en-us/azure/iot-operations/deploy-iot-ops/howto-deploy-iot-operations?tabs=github#deploy-extensions).
 
-# Prereq
+## Prereq
 
 - Docker
 - Azure cli
@@ -155,6 +155,8 @@ Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/S
 6. [mq-onelake-upload](https://github.com/Azure-Samples/explore-iot-operations/blob/main/tutorials/mq-onelake-upload/deployBaseResources.bicep)
 7. [azure-edge-extensions-aio-dp-jumpstart](https://github.com/Azure-Samples/azure-edge-extensions-aio-dp-jumpstart/tree/main)
 8. [Local K2d in K3s on docker](https://www.suse.com/c/introduction-k3d-run-k3s-docker-src/)
+9. [Azure iot sample opc ua server](https://learn.microsoft.com/en-us/samples/azure-samples/iot-edge-opc-plc/azure-iot-sample-opc-ua-server/)
+10. [Configure the simulator](https://learn.microsoft.com/en-au/azure/iot-operations/get-started/quickstart-add-assets)
 
 ## Troubleshoot
 

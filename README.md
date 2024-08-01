@@ -52,6 +52,35 @@ deploy AIO using GitOps, see the [Deploy to cluster documentation](https://learn
     az provider register -n "Microsoft.DeviceRegistry"
     ```
 
+5. Create AKS Cluster
+6. Connect AKS CLuster to ARC
+
+    ```bash
+    az connectedk8s connect --name "arctest003aks" --resource-group "arctest003" --location "eastus" --correlation-id "c18ab9d0-685e-48e7-ab55-12588447b0ed" --tags "Datacenter City StateOrDistrict CountryOrRegion"
+    ```
+
+7. Deploy KeyVault Extetion via ARC
+
+    ```bash
+    az aks enable-addons --addons azure-keyvault-secrets-provider --name arctest003aks --resource-group arctest003
+    ```
+
+8. Deploy Event Grid Extension via ARC
+
+    ```bash
+    az extension add --upgrade --name azure-iot-ops
+    az iot ops init --subscription 5f5dd16b-0879-4c86-884f-30347411b95f -g arctest003 --cluster arctest003aks --kv-id /subscriptions/5f5dd16b-0879-4c86-884f-30347411b95f/resourceGroups/arctest003/providers/Microsoft.KeyVault/vaults/arctest003kv --custom-location arctest003aks-cl --target arctest003aks-target --include-dp --dp-instance arctest003aks-processor --simulate-plc --mq-instance mq-instance--2003 --mq-mode auto --mq-mem-profile low
+    ```
+
+9. Deploy IoT Operations Extension via ARC
+
+    ```bash
+    az extension add --upgrade --name azure-iot-ops
+    az iot ops init --subscription 5f5dd16b-0879-4c86-884f-30347411b95f -g arctest003 --cluster arctest003aks --kv-id /subscriptions/5f5dd16b-0879-4c86-884f-30347411b95f/resourceGroups/arctest003/providers/Microsoft.KeyVault/vaults/arctest003kv --custom-location arctest003aks-cl --target arctest003aks-target --include-dp --dp-instance arctest003aks-processor --simulate-plc --mq-instance mq-instance--2003 --mq-mode auto --mq-mem-profile low
+    ```
+
+10. [Goto IoT Operation Expericne Portal](https://iotoperations.azure.com/)
+
 ## GitOps
 
 Deployment of AIO through GitOps, there are some additional steps you will need to take to set up the fork.
@@ -125,3 +154,352 @@ Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/S
 5. [Private AKS with bicep](https://github.com/vakappas/private-aks-bicep/blob/main/README.md)
 6. [mq-onelake-upload](https://github.com/Azure-Samples/explore-iot-operations/blob/main/tutorials/mq-onelake-upload/deployBaseResources.bicep)
 7. [azure-edge-extensions-aio-dp-jumpstart](https://github.com/Azure-Samples/azure-edge-extensions-aio-dp-jumpstart/tree/main)
+8. [Local K2d in K3s on docker](https://www.suse.com/c/introduction-k3d-run-k3s-docker-src/)
+
+## Troubleshoot
+
+1. How Connecting a cluster should look
+
+    ```bash
+    Requesting a Cloud Shell.Succeeded. 
+    Connecting terminal...
+
+    Welcome to Azure Cloud Shell
+
+    Type "az" to use Azure CLI
+    Type "help" to learn about Cloud Shell
+
+    Your Cloud Shell session will be ephemeral so no files or system changes will persist beyond your current session.
+    elliot [ ~ ]$ az account set --subscription 5f5dd16b-0879-4c86-884f-30347411b95f
+    elliot [ ~ ]$ az aks get-credentials --resource-group arctest003 --name arctest003aks --overwrite-existing
+    Merged "arctest003aks" as current context in /home/elliot/.kube/config
+    elliot [ ~ ]$ az connectedk8s connect --name "arctest003aks" --resource-group "arctest003" --location "eastus" --correlation-id "c18ab9d0-685e-48e7-ab55-12588447b0ed" --tags "Datacenter City StateOrDistrict CountryOrRegion"
+    The command requires the extension connectedk8s. Do you want to install it now? The command will continue to run after the extension is installed. (Y/n): y
+    Run 'az config set extension.use_dynamic_install=yes_without_prompt' to allow installing extensions without prompt.
+    Default enabled including preview versions for extension installation now. Disabled in future release. Use '--allow-preview true' to enable it specifically if needed. Use '--allow-preview false' to install stable version only. 
+    This operation might take a while...
+
+    Step: 2024-08-01T02-05-29Z: Validating custom access token
+    Step: 2024-08-01T02-05-29Z: Checking Provider Registrations
+    Step: 2024-08-01T02-05-30Z: Setting KubeConfig
+    Step: 2024-08-01T02-05-30Z: Escape Proxy Settings, if passed in
+    Step: 2024-08-01T02-05-30Z: Checking Connectivity to Cluster
+    Step: 2024-08-01T02-05-31Z: Do node validations
+    Step: 2024-08-01T02-05-33Z: Install Kubectl client if it does not exist
+    Downloading kubectl client for first time. This can take few minutes...
+    To check existing issues, please visit: https://github.com/Azure/azure-cli/issues
+
+
+    Step: 2024-08-01T02-05-46Z: Install Helm client if it does not exist
+    Downloading helm client for first time. This can take few minutes...
+    Step: 2024-08-01T02-05-57Z: Starting Pre-onboarding-check
+    Step: 2024-08-01T02-05-57Z: Creating folder for Cluster Diagnostic Checks Logs
+    Step: 2024-08-01T02-05-57Z: Get namespace of release: cluster-diagnostic-checks
+    Step: 2024-08-01T02-05-58Z: Determine Helmchart Export Path
+    Step: 2024-08-01T02-05-58Z: Pulling HelmChart: mcr.microsoft.com/azurearck8s/helmchart/stable/clusterdiagnosticchecks, Version: 0.2.2
+    Step: 2024-08-01T02-05-59Z: Chart path for Cluster Diagnostic Checks Job: /home/elliot/.azure/PreOnboardingChecksCharts/clusterdiagnosticchecks
+    Step: 2024-08-01T02-05-59Z: Creating Cluster Diagnostic Checks job
+    Step: 2024-08-01T02-06-13Z: The required pre-checks for onboarding have succeeded.
+    Step: 2024-08-01T02-06-13Z: Checking if user can create ClusterRoleBindings
+    Step: 2024-08-01T02-06-14Z: Determining Cluster Distribution and Infrastructure
+    Connecting an Azure Kubernetes Service (AKS) cluster to Azure Arc is only required for running Arc enabled services like App Services and Data Services on the cluster. Other features like Azure Monitor and Azure Defender are natively available on AKS. Learn more at https://go.microsoft.com/fwlink/?linkid=2144200.
+    Step: 2024-08-01T02-06-14Z: Checking Connect RP is available in the Location passed in.
+    Step: 2024-08-01T02-06-14Z: Check if an earlier azure-arc release exists
+    Step: 2024-08-01T02-06-14Z: Get namespace of release: azure-arc
+    Step: 2024-08-01T02-06-16Z: Deleting Arc CRDs
+    Step: 2024-08-01T02-06-33Z: Check if ResourceGroup exists.  Try to create if it doesn't
+    Step: 2024-08-01T02-06-33Z: Getting HelmPackagePath from Arc DataPlane
+    Step: 2024-08-01T02-06-34Z: Determine Helmchart Export Path
+    Step: 2024-08-01T02-06-34Z: Pulling HelmChart: mcr.microsoft.com/azurearck8s/batch1/stable/azure-arc-k8sagents, Version: 1.18.2
+    Step: 2024-08-01T02-06-34Z: Generating Public-Private Key pair
+    Step: 2024-08-01T02-06-48Z: Generating ARM Request Payload
+    Step: 2024-08-01T02-06-48Z: Azure resource provisioning has begun.
+    Step: 2024-08-01T02-08-29Z: Azure resource provisioning has finished.
+    Step: 2024-08-01T02-08-29Z: Checking Microsoft.ExtendedLocation RP Registration state for this Subscription, and get OID, if registered 
+    Step: 2024-08-01T02-08-32Z: Starting to install Azure arc agents on the Kubernetes cluster.
+    Step: 2024-08-01T02-10-02Z: Helm install of Azure arc agents Release ended.
+    {
+    "agentPublicKeyCertificate": "MIICCgKCAgEAspFeAWJeuONGennjH4lPVxLvmQrEbA3eFArUPF+UxIlSAlIw0mGvukRaM85j9OyGomnFaFgQogLG5nwNQVzNFsn3k/5Crxm6I6qJEJiaOrwPCqbVADirYJJa1hzFBSCeubpeYx4YlF5LEJQCKd6/qS/QRgq9NrOjdICB+nfD27de9DJ6O0de7cnitn3xShdPTYelKOddk9A/ZiiwdZg74spoIl/eA00QN8FM7mfHo3saiOYbmm+jYehmEsD9aXqG0JyG4xBscU0YMRsV0wbH5zCwcbxgiHNGLXZulHpaY1rRTGnNt4i/5AWFmzhwfCXqcRIYLJ81/seFz3XwFynly6DxWc/glKVdxx4EvoUh2EohKC/MK2946SECD4XsAP6MVuuBxy8vlPHQQTZqQsBQUTZ89vS0zV2XhXPF/oNsPhmgurvPitb6AzUDLiNKsBZyDQ6WLv0n89kEHtK0+d9QrW4b1aA1+YOy/HTrCMpnZD1LAgdFSaW+4oic5iOZZarhsiMPZGywJ7++dj/6zdEZs4otJqIu0zRf3tvLf2jZIgswuvqLX6Izs8NqCBq37nS3UWjODo9Ig0RlWNqrg2Dz5TK6OOXPoGhv4oB+G6WQKPT3xpY2xRRcNCP6nQgD7tNBScfYokrdifLvaxnL5NNqQ0JOFdCRIimclm9d9Uy5vMcCAwEAAQ==",
+    "agentVersion": null,
+    "connectivityStatus": "Connecting",
+    "distribution": "aks",
+    "id": "/subscriptions/5f5dd16b-0879-4c86-884f-30347411b95f/resourceGroups/arctest003/providers/Microsoft.Kubernetes/connectedClusters/arctest003aks",
+    "identity": {
+        "principalId": "de9459e4-6068-412d-8020-f357b2e68c3f",
+        "tenantId": "1b4cd3e4-a68e-41ec-bf16-08766eed1e94",
+        "type": "SystemAssigned"
+    },
+    "infrastructure": "azure",
+    "kubernetesVersion": null,
+    "lastConnectivityTime": null,
+    "location": "eastus",
+    "managedIdentityCertificateExpirationTime": null,
+    "name": "arctest003aks",
+    "offering": null,
+    "provisioningState": "Succeeded",
+    "resourceGroup": "arctest003",
+    "systemData": {
+        "createdAt": "2024-08-01T02:06:51.426587+00:00",
+        "createdBy": "elliot.wood@lab3.com.au",
+        "createdByType": "User",
+        "lastModifiedAt": "2024-08-01T02:06:51.426587+00:00",
+        "lastModifiedBy": "elliot.wood@lab3.com.au",
+        "lastModifiedByType": "User"
+    },
+    "tags": {
+        "Datacenter City StateOrDistrict CountryOrRegion": ""
+    },
+    "totalCoreCount": null,
+    "totalNodeCount": null,
+    "type": "microsoft.kubernetes/connectedclusters"
+    }
+
+    ```
+
+2. User or App doest not have Keyvault List Permission
+
+    ```bash
+    az iot ops init --subscription 5f5dd16b-0879-4c86-884f-30347411b95f -g arctest003 --cluster arctest003aks --kv-id /subscriptions/5f5dd16b-0879-4c86-884f-30347411b95f/resourceGroups/arctest003/providers/Microsoft.KeyVault/vaults/arctest003kv --custom-location arctest003aks-cl --target arctest003aks-target --include-dp --dp-instance arctest003aks-processor --simulate-plc --mq-instance mq-instance--2003 --mq-mode auto --mq-mem-profile low
+    Command group 'iot ops' is in preview and under development. Reference and support levels: https://aka.ms/CLI_refstatus
+                                                                                                                                                                                                                                    
+    Azure IoT Operations init                                                                                                                                                                                                          
+    Workflow Id: 8428dd6619174e0dba804a6634440fbf                                                                                                                                                                                      
+                                                                                                                                                                                                                                    
+    Pre-Flight                                                                                                                                                                                                                      
+        ✔ Ensure registered IoT Ops resource providers                                                                                                                                                                                
+        ✔ Enumerate pre-flight checks                                                                                                                                                                                                 
+        ✔ Verify What-If deployment                                                                                                                                                                                                   
+    -> Key Vault CSI Driver                                                                                                                                                                                                            
+        ✔ Verify Key Vault 'arctest003kv' permission model                                                                                                                                                                            
+        ✔ Created app 'eb0d691a-4971-48db-9d36-35e5d9ca775e'                                                                                                                                                                          
+        ✔ Configure access policy                                                                                                                                                                                                     
+        * Ensure default SPC secret name 'azure-iot-operations'                                                                                                                                                                       
+        - Test SP access                                                                                                                                                                                                              
+        - Deploy driver to cluster 'v1.5.3'                                                                                                                                                                                           
+        - Configure driver                                                                                                                                                                                                            
+    TLS                                                                                                                                                                                                                             
+        - Generate test CA using 'secp256r1' valid for '365' days                                                                                                                                                                     
+        - Configure cluster for tls                                                                                                                                                                                                   
+    Deploy IoT Operations - v0.5.1-preview                                                                                                                                                                                          
+                                                                                                                                                                                                                                    
+    ⠸ Done. ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   Elapsed: 0:01:50                                                                                                                                                                
+                                                                                                                                                                                                                                    
+    Forbidden({"error":{"code":"Forbidden","message":"The user, group or application 'appid=b677c290-cf4b-4a8e-a60e-91ba650a4abe;oid=bb6c54df-d80b-4d79-877c-57a972e95cb4;numgroups=1;iss=https://sts.windows.net/1b4cd3e4-a68e-41ec-bf16-08766eed1e94/' does not have secrets list permission on key vault 'arctest003kv;location=eastus'. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125287","innererror":{"code":"AccessDenied"}}})
+    ```
+
+    1. Goto Azure portal - find the keyvault, click Access polices, then create access policy - https://learn.microsoft.com/en-us/azure/key-vault/general/assign-access-policy?tabs=azure-portal 
+    2. Choose User or App - in  my case its was my OID for my user account, then on application skip.
+    3. Save and retry command.
+
+        ```bash
+        az iot ops init --subscription 5f5dd16b-0879-4c86-884f-30347411b95f -g arctest003 --cluster arctest003aks --kv-id /subscriptions/5f5dd16b-0879-4c86-884f-30347411b95f/resourceGroups/arctest003/providers/Microsoft.KeyVault/vaults/arctest003kv --custom-location arctest003aks-cl --target arctest003aks-target --include-dp --dp-instance arctest003aks-processor --simulate-plc --mq-instance mq-instance--2003 --mq-mode auto --mq-mem-profile low
+        Command group 'iot ops' is in preview and under development. Reference and support levels: https://aka.ms/CLI_refstatus
+                                                                                                                                                                                                                                        
+        Azure IoT Operations init                                                                                                                                                                                                          
+        Workflow Id: 4daded8a40bb4a418fbaa61d944e7b8e                                                                                                                                                                                      
+                                                                                                                                                                                                                                        
+        Pre-Flight                                                                                                                                                                                                                      
+            ✔ Ensure registered IoT Ops resource providers                                                                                                                                                                                
+            ✔ Enumerate pre-flight checks                                                                                                                                                                                                 
+            ✔ Verify What-If deployment                                                                                                                                                                                                   
+        -> Key Vault CSI Driver                                                                                                                                                                                                            
+            ✔ Verify Key Vault 'arctest003kv' permission model                                                                                                                                                                            
+            ✔ Created app '83a8afed-af31-44a0-a6e7-f64854e779da'                                                                                                                                                                          
+            ✔ Configure access policy                                                                                                                                                                                                     
+            ✔ Ensure default SPC secret name 'azure-iot-operations'                                                                                                                                                                       
+            ✔ Test SP access                                                                                                                                                                                                              
+            * Deploy driver to cluster 'v1.5.3'                                                                                                                                                                                           
+            - Configure driver                                                                                                                                                                                                            
+        TLS                                                                                                                                                                                                                             
+            - Generate test CA using 'secp256r1' valid for '365' days                                                                                                                                                                     
+            - Configure cluster for tls                                                                                                                                                                                                   
+        Deploy IoT Operations - v0.5.1-preview                                                                                                                                                                                          
+                                                                                                                                                                                                                                        
+        ⠦ Work. ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   Elapsed: 0:17:51
+        ```
+
+3. Running K3s in Docker then register in arc
+
+    1. You man need to first install prereqs like cli onto host machine (im using windows), for linux prepend sudo to the commands)
+
+        ```bash
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        az extension add --name connectedk8s
+        az login --use-device-code
+        ```
+
+    2. Register providers
+
+        ```bash
+        az provider register --namespace Microsoft.Kubernetes
+        az provider register --namespace Microsoft.KubernetesConfiguration
+        az provider register --namespace Microsoft.ExtendedLocation
+
+        az provider show -n Microsoft.Kubernetes -o table
+        az provider show -n Microsoft.KubernetesConfiguration -o table
+        az provider show -n Microsoft.ExtendedLocation -o table
+        ```
+
+    3. There are several ways to run K3s in Docker:
+
+        To use Docker, rancher/k3s images are also available to run the K3s server and agent. Using the docker run command:
+
+        ```bash
+        docker run --privileged --name k3s-server-1 --hostname k3s-server-1 -p 6443:6443 -d rancher/k3s:v1.24.10-k3s1 server
+        ```
+
+        You must specify a valid K3s version as the tag; the latest tag is not maintained.
+        Docker images do not allow a + sign in tags, use a - in the tag instead.
+
+    4. Once K3s is up and running, you can copy the admin kubeconfig out of the Docker container for use:
+
+        ```bash
+        docker cp k3s-server-1:/etc/rancher/k3s/k3s.yaml .kube/config
+        ```
+
+    5. From host machine run
+
+        ```bash
+        az connectedk8s connect --name arctest002Arc --resource-group arctest002 --location eastus 
+        ```
+
+        Outputs:
+
+        ```bash
+        This operation might take a while...
+
+        The required pre-checks for onboarding have succeeded.
+        Azure resource provisioning has begun.
+        Azure resource provisioning has finished.
+        Starting to install Azure arc agents on the Kubernetes cluster.
+        {
+        "agentPublicKeyCertificate": "MIICCgKCAgEAriglHP4WUqUBpG6YYcuj0cVnAaZiIwxdPRFDyGxSPccZOdCT0Mp7MAICsEcANOHcJDikIzSlzdAQ+jEaXKSmmHU/3xG7LqBIRXl1xE+IHMXk96tLLhvDPzcdGkYOWbjNkY6mXU+x9zKmq4EU+8K5dqkjwxmRDokqIQivFZ6K6hrf1eriQFThs7aZcaRu4i7Clp22UAYztWF/927L4my3DlSSdQijHt0tVLIlMMnRh1vhNEYFMK2+Zaj6lHG4il6HDJyyvXV5iihnnxxKiIl1nVwGH3xJTgJW+5KSd5ahv2/z54a/Eq51Wk+md238L4s+YP6Eoy0YT97voLE8PPRVu13nNyF40DwEFrQIzijeb8p1G9E5lAGdVuKIqLThEoN5JT+1N2fnmhISb9owcx2CIzKI6PPpAMJYGAowm1FQ1htG8fo9O5UPXX6GOXhiE7Xhk9Ukxvp3y8uc2VtiNYGWbW+lg2Ua1T3oZJvWLYMQcdLHXbZqZpkNr2la/V2YPmJ2rNN238jaAVXvyQoRF8TNBSifWVCPYD6dwZ1ML9Bdm6E4ibnEMhCcPp882DaQMm8hXiPahDfjvAxXR3qF/hSeEBTsqufnrXcbGp1TWb2GkEkB5JHoSNjE2ihjiu4Fe+JR78gXbmuSjTNBjC7KuIx9fH36mIvN+OwTSMaD94Rbu7MCAwEAAQ==",
+        "agentVersion": null,
+        "connectivityStatus": "Connecting",
+        "distribution": "k3s",
+        "id": "/subscriptions/5f5dd16b-0879-4c86-884f-30347411b95f/resourceGroups/arctest002/providers/Microsoft.Kubernetes/connectedClusters/arctest002Arc",
+        "identity": {
+            "principalId": "d9bc9fb7-1035-4478-a553-02bfb4f7d615",
+            "tenantId": "1b4cd3e4-a68e-41ec-bf16-08766eed1e94",
+            "type": "SystemAssigned"
+        },
+        "infrastructure": "generic",
+        "kubernetesVersion": null,
+        "lastConnectivityTime": null,
+        "location": "eastus",
+        "managedIdentityCertificateExpirationTime": null,
+        "name": "arctest002Arc",
+        "offering": null,
+        "provisioningState": "Succeeded",
+        "resourceGroup": "arctest002",
+        "systemData": {
+            "createdAt": "2024-08-01T03:30:35.836411+00:00",
+            "createdBy": "elliot.wood@lab3.com.au",
+            "createdByType": "User",
+            "lastModifiedAt": "2024-08-01T03:30:35.836411+00:00",
+            "lastModifiedBy": "elliot.wood@lab3.com.au",
+            "lastModifiedByType": "User"
+        },
+        "tags": {},
+        "totalCoreCount": null,
+        "totalNodeCount": null,
+        "type": "microsoft.kubernetes/connectedclusters"
+        }
+        ```
+
+    6. Verify its connected
+
+        ```bash
+        az connectedk8s list --resource-group arctest002 --output table
+        ```
+
+        Outputs:
+
+        ```bash
+        Name           Location    ResourceGroup
+        -------------  ----------  ---------------
+        arctest002Arc  eastus      arctest002
+        ```
+
+4. Checking IoT Operations
+
+    ```bash
+        elliot [ ~ ]$ az iot ops check
+        Command group 'iot ops' is in preview and under development. Reference and support levels: https://aka.ms/CLI_refstatus
+
+        ────────────────────────────── Evaluation for {mq} service deployment ──────────────────────────────
+
+        Post deployment checks ─────────────────────────────────────────────────────────────────────────────
+
+            ✔ Enumerate MQ API resources                                                                    
+                mq.iotoperations.azure.com/v1beta1 API resources                                            
+                    DataLakeConnectorTopicMap                                                               
+                    KafkaConnector                                                                          
+                    MqttBridgeConnector                                                                     
+                    IoTHubConnector                                                                         
+                    DataLakeConnector                                                                       
+                    Broker                                                                                  
+                    MqttBridgeTopicMap                                                                      
+                    BrokerAuthorization                                                                     
+                    DiagnosticService                                                                       
+                    BrokerListener                                                                          
+                    BrokerAuthentication                                                                    
+                    IoTHubConnectorRoutesMap                                                                
+                    KafkaConnectorTopicMap                                                                  
+
+            ✔ Evaluate MQ brokers                                                                           
+                                                                                                            
+            ✔ MQ Brokers in namespace {azure-iot-operations}                                              
+                - Expecting 1 broker resource per namespace. Detected 1.                                    
+                                                                                                            
+                - Broker {broker} mode auto.                                                                
+                    Status {Running}. All back and frontend replicas are running.                           
+                                                                                                            
+                Runtime Health                                                                              
+                    Pod {aio-mq-diagnostics-probe-0} in phase {Running}.                                    
+                    Pod {aio-mq-dmqtt-frontend-0} in phase {Running}.                                       
+                    Pod {aio-mq-dmqtt-frontend-1} in phase {Running}.                                       
+                    Pod {aio-mq-dmqtt-backend-1-0} in phase {Running}.                                      
+                    Pod {aio-mq-dmqtt-backend-1-1} in phase {Running}.                                      
+                    Pod {aio-mq-dmqtt-backend-2-0} in phase {Running}.                                      
+                    Pod {aio-mq-dmqtt-backend-2-1} in phase {Running}.                                      
+                    Pod {aio-mq-dmqtt-authentication-0} in phase {Running}.                                 
+                    Pod {aio-mq-dmqtt-health-manager-0} in phase {Running}.                                 
+
+            ✔ Evaluate MQ broker listeners                                                                  
+                                                                                                            
+            ✔ Broker Listeners in namespace {azure-iot-operations}                                        
+                - Expecting >=1 broker listeners per namespace. Detected 1.                                 
+                                                                                                            
+                - Broker Listener {listener}. Valid broker reference {broker}.                              
+                                                                                                            
+            ✔ Service {aio-mq-dmqtt-frontend} of type clusterIp                                           
+
+            ✔ Evaluate MQ Diagnostics Service                                                               
+                                                                                                            
+            ✔ Diagnostic Service Resources in namespace {azure-iot-operations}                            
+                - Expecting 1 diagnostics service resource per namespace. Detected 1.                       
+                                                                                                            
+                - Diagnostic service resource {diagnostics}.                                                
+                                                                                                            
+            ✔ Service Status                                                                              
+                    Service {aio-mq-diagnostics-service} detected.                                          
+                    Pod {aio-mq-diagnostics-service-f8fb947dc-dbsb6} in phase {Running}.                    
+
+            🔨 Evaluate MQTT Bridge Connectors                                                              
+                No MQTT Bridge Connector resources detected                                                 
+
+            🔨 Evaluate Data Lake Connectors                                                                
+                No Data Lake Connector resources detected                                                   
+
+            🔨 Evaluate Kafka Connectors                                                                    
+                No Kafka Connector resources detected                                                       
+
+
+        ╭─────── Check Summary ───────╮
+        │ 17 check(s) succeeded.      │
+        │ 0 check(s) raised warnings. │
+        │ 0 check(s) raised errors.   │
+        │ 3 check(s) were skipped.    │
+        ╰─────────────────────────────╯
+    ```

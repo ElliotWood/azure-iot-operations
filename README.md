@@ -59,27 +59,71 @@ deploy AIO using GitOps, see the [Deploy to cluster documentation](https://learn
     az connectedk8s connect --name "arctest003aks" --resource-group "arctest003" --location "eastus" --correlation-id "c18ab9d0-685e-48e7-ab55-12588447b0ed" --tags "Datacenter City StateOrDistrict CountryOrRegion"
     ```
 
-7. Deploy KeyVault Extetion via ARC
+7. Deploy cluster-connect custom-locations Extetion via ARC
+    1. Azure CLI (cloud)
+
+        ```bash
+        elliot [ ~ ]$ az connectedk8s enable-features -n arctest003aks -g arctest003 --features cluster-connect custom-locations
+        The command requires the extension connectedk8s. Do you want to install it now? The command will continue to run after the extension is installed. (Y/n): y
+        Run 'az config set extension.use_dynamic_install=yes_without_prompt' to allow installing extensions without prompt.
+        Default enabled including preview versions for extension installation now. Disabled in future release. Use '--allow-preview true' to enable it specifically if needed. Use '--allow-preview false' to install stable version only. 
+        This command is in preview and under development. Reference and support levels: https://aka.ms/CLI_refstatus
+        This operation might take a while...
+
+        Step: 2024-08-02T04-13-43Z: Validating custom access token
+        Step: 2024-08-02T04-13-44Z: Checking Microsoft.ExtendedLocation RP Registration state for this Subscription, and get OID, if registered 
+        Step: 2024-08-02T04-13-46Z: Setting KubeConfig
+        Step: 2024-08-02T04-13-47Z: Checking Connectivity to Cluster
+        Step: 2024-08-02T04-13-48Z: Install Helm client if it does not exist
+        Downloading helm client for first time. This can take few minutes...
+        Step: 2024-08-02T04-13-49Z: Get namespace of release: azure-arc
+        Step: 2024-08-02T04-13-57Z: Getting HelmPackagePath from Arc DataPlane
+        Step: 2024-08-02T04-13-58Z: Determine Helmchart Export Path
+        Step: 2024-08-02T04-13-58Z: Pulling HelmChart: mcr.microsoft.com/azurearck8s/batch1/stable/azure-arc-k8sagents, Version: 1.18.2
+        "Successsfully enabled features: ['cluster-connect', 'custom-locations'] for the Connected Cluster arctest003aks"
+        elliot [ ~ ]$ 
+        ```
+
+    2. Azure CLI (on prem / docker)
+
+        ```bash
+        PS C:\Users\ElliotWood> az connectedk8s enable-features -n arctest002arc -g arctest002 --features cluster-connect custom-locations
+        D:\a\_work\1\s\build_scripts\windows\artifacts\cli\Lib\site-packages\cryptography/hazmat/backends/openssl/backend.py:17: UserWarning: You are using cryptography on a 32-bit Python on a 64-bit Windows Operating System. Cryptography will be significantly faster if you switch to using a 64-bit Python.
+        This command is in preview and under development. Reference and support levels: https://aka.ms/CLI_refstatus
+        This operation might take a while...
+
+        Step: 2024-08-02T04-11-37Z: Validating custom access token
+        Step: 2024-08-02T04-11-38Z: Checking Microsoft.ExtendedLocation RP Registration state for this Subscription, and get OID, if registered
+        Step: 2024-08-02T04-11-40Z: Setting KubeConfig
+        Step: 2024-08-02T04-11-40Z: Checking Connectivity to Cluster
+        Step: 2024-08-02T04-11-40Z: Install Helm client if it does not exist
+        Step: 2024-08-02T04-11-40Z: Get namespace of release: azure-arc
+        Step: 2024-08-02T04-11-43Z: Getting HelmPackagePath from Arc DataPlane
+        Step: 2024-08-02T04-11-44Z: Determine Helmchart Export Path
+        Step: 2024-08-02T04-11-44Z: Pulling HelmChart: mcr.microsoft.com/azurearck8s/batch1/stable/azure-arc-k8sagents, Version: 1.18.2
+        "Successsfully enabled features: ['cluster-connect', 'custom-locations'] for the Connected Cluster arctest002Arc"
+
+8. Deploy KeyVault Extetion via ARC
 
     ```bash
     az aks enable-addons --addons azure-keyvault-secrets-provider --name arctest003aks --resource-group arctest003
     ```
 
-8. Deploy Event Grid Extension via ARC
+9. Deploy Event Grid Extension via ARC
 
     ```bash
     az extension add --upgrade --name azure-iot-ops
     az iot ops init --subscription 5f5dd16b-0879-4c86-884f-30347411b95f -g arctest003 --cluster arctest003aks --kv-id /subscriptions/5f5dd16b-0879-4c86-884f-30347411b95f/resourceGroups/arctest003/providers/Microsoft.KeyVault/vaults/arctest003kv --custom-location arctest003aks-cl --target arctest003aks-target --include-dp --dp-instance arctest003aks-processor --simulate-plc --mq-instance mq-instance--2003 --mq-mode auto --mq-mem-profile low
     ```
 
-9. Deploy IoT Operations Extension via ARC
+10. Deploy IoT Operations Extension via ARC
 
     ```bash
     az extension add --upgrade --name azure-iot-ops
     az iot ops init --subscription 5f5dd16b-0879-4c86-884f-30347411b95f -g arctest003 --cluster arctest003aks --kv-id /subscriptions/5f5dd16b-0879-4c86-884f-30347411b95f/resourceGroups/arctest003/providers/Microsoft.KeyVault/vaults/arctest003kv --custom-location arctest003aks-cl --target arctest003aks-target --include-dp --dp-instance arctest003aks-processor --simulate-plc --mq-instance mq-instance--2003 --mq-mode auto --mq-mem-profile low
     ```
 
-10. [Goto IoT Operation Expericne Portal](https://iotoperations.azure.com/)
+11. [Goto IoT Operation Experience Portal](https://iotoperations.azure.com/)
 
 ## GitOps
 
@@ -347,7 +391,8 @@ Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/S
         To use Docker, rancher/k3s images are also available to run the K3s server and agent. Using the docker run command:
 
         ```bash
-        docker run --privileged --name k3s-server-1 --hostname k3s-server-1 -p 6443:6443 -d rancher/k3s:v1.24.10-k3s1 server
+        #docker run --privileged --name k3s-server-1 --hostname k3s-server-1 -p 6443:6443 -d rancher/k3s:v1.24.10-k3s1 server
+        docker run -d --name k3s-server-1 --privileged -v /var/lib/kubelet:/var/lib/kubelet:shared -v /var/run:/var/run -p 6443:6443 rancher/k3s:v1.24.10-k3s1 server
         ```
 
         You must specify a valid K3s version as the tag; the latest tag is not maintained.
@@ -505,3 +550,126 @@ Please see [Security.](https://github.com/Azure/azure-iot-operations/blob/main/S
         │ 3 check(s) were skipped.    │
         ╰─────────────────────────────╯
     ```
+
+Follow these steps in the order to start routing events using Event Grid on Kubernetes.
+
+1. [Connect your cluster to Azure Arc](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster).
+    See Above
+
+2. [Install an Event Grid extension](https://learn.microsoft.com/en-us/azure/event-grid/kubernetes/install-k8s-extension), which is the actual resource that deploys Event Grid to a Kubernetes cluster. To learn more about the extension, see [Event Grid Extension](https://learn.microsoft.com/en-us/azure/event-grid/kubernetes/install-k8s-extension#event-grid-extension) section to learn more.
+
+    1. Get storage info
+
+        1. using docker k3s
+
+            - Make sure to apply these from host machine for the docker hosted kube cluster
+
+                ```bash
+                kubectl apply -f pvc.yaml
+                kubectl apply -f pod.yaml
+                ```
+
+                ```yaml
+                    ---pvc.yaml---
+                    apiVersion: v1
+                    kind: PersistentVolumeClaim
+                    metadata:
+                    name: my-pvc
+                    spec:
+                    accessModes:
+                        - ReadWriteOnce
+                    resources:
+                        requests:
+                        storage: 1Gi
+                    ---pod.yaml---
+                    apiVersion: v1
+                    kind: Pod
+                    metadata:
+                    name: my-pod
+                    spec:
+                    containers:
+                    - name: my-container
+                        image: busybox
+                        command: ["sleep", "3600"]
+                        volumeMounts:
+                        - mountPath: "/data"
+                        name: my-volume
+                    volumes:
+                    - name: my-volume
+                        persistentVolumeClaim:
+                        claimName: my-pvc
+                    ---
+                ```
+
+            - K3s typically installs with a default storage class configured.
+                
+                When you install K3s, it sets up a simple host-path based storage class that can be used for provisioning persistent volumes (PVs) in a single-node cluster or for simple use cases in multi-node clusters.
+
+                You can check the default storage class in your K3s cluster with the following command:
+
+                ```kubectl get storageclass```                You should see an output similar to:
+
+                | NAME                  | PROVISIONER           | RECLAIMPOLICY | VOLUMEBINDINGMODE | ALLOWVOLUMEEXPANSION | AGE  |
+                |-----------------------|------------------------|--------------|-------------------|----------------------|------|
+                | local-path (default)  | rancher.io/local-path  | Delete       | Immediate         | false                |      |
+
+        2. Using aks
+
+            ```kubectl get storageclass```            You should see an output similar to:
+
+            | NAME                  | PROVISIONER          | RECLAIMPOLICY | VOLUMEBINDINGMODE       | ALLOWVOLUMEEXPANSION | AGE  |
+            |-----------------------|-----------------------|--------------|-------------------------|----------------------|------|
+            | azurefile             | file.csi.azure.com    | Delete       | Immediate               | true                 | 5d5h |
+            | azurefile-csi         | file.csi.azure.com    | Delete       | Immediate               | true                 | 5d5h |
+            | azurefile-csi-premium | file.csi.azure.com    | Delete       | Immediate               | true                 | 5d5h |
+            | azurefile-premium     | file.csi.azure.com    | Delete       | Immediate               | true                 | 5d5h |
+            | default (default)     | disk.csi.azure.com    | Delete       | WaitForFirstConsumer    | true                 | 5d5h |
+            | managed               | disk.csi.azure.com    | Delete       | WaitForFirstConsumer    | true                 | 5d5h |
+            | managed-csi           | disk.csi.azure.com    | Delete       | WaitForFirstConsumer    | true                 | 5d5h |
+            | managed-csi-premium   | disk.csi.azure.com    | Delete       | WaitForFirstConsumer    | true                 | 5d5h |
+            | managed-premium       | disk.csi.azure.com    | Delete       | WaitForFirstConsumer    | true                 | 5d5h |
+
+        3. Create event grid extention (UI)
+
+            - name eventgrid-etx
+            - Namespace eventgrid-system
+            - storage class
+                1. specified k3s built in storage local-path
+                2. or azurefile for aks
+            - Cluster extension details:
+
+            | Key                                                        | Value          |
+            |------------------------------------------------------------|----------------|
+            | Microsoft.CustomLocation.ServiceAccount                   | eventgrid-operator |
+            | eventgridbroker.service.serviceType                        | ClusterIP       |
+            | eventgridbroker.dataStorage.storageClassName                | local-path      |
+            | eventgridbroker.diagnostics.metrics.reporterType            | none            |
+            | eventgridbroker.service.supportedProtocols[0]               | http            |
+            | eventgridbroker.dataStorage.size                            | 1Gi             |
+            | eventgridbroker.resources.limits.memory                     | 1Gi             |
+            | eventgridbroker.resources.requests.memory                   | 200Mi           |
+
+
+3. [Create a custom location](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/custom-locations). A custom location represents a namespace in the cluster and it's the place where topics and event subscriptions are deployed.
+
+    1. Add Arc-enabled services
+
+        Add eventgrid-etx | microsoft.eventgrid
+
+4. [Create a topic and one or more event subscriptions](https://learn.microsoft.com/en-us/azure/event-grid/kubernetes/create-topic-subscription).
+
+    | Name | Value |
+    |----------------------------------------------------|---------------------------------------------|
+    | Name                                               | arctest002-telemetry / arctest003-telemetry |
+    | Subscription                                       | SensorMine-Development                      |
+    | Resource group                                     | arctest002 / arctest003                     |
+    | Location                                           | ewhouse / arctest003aks-cl (or the name of your custom location above) |
+    | Networking                                         | Connectivity method                         |
+    | Public access                                      | Schema                                      |
+    | Event Schema                                       | Cloud Event Schema v1.0                     |
+    | Identity                                           | Enable system assigned identity             |
+    | Disabled                                           | Enable user assigned identity               |
+    | Disabled                                           | Transport layer security                    |
+    | Minimum TLS version                                | 1.2                                         |
+
+5. [Publish events](https://learn.microsoft.com/en-us/azure/event-grid/kubernetes/create-topic-subscription)
